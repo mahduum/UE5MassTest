@@ -1,0 +1,24 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "NoiseGen",
+	"Description": "Plugin for generation of multidimentional value, perlin and simplex noise and its derivatives. ",
+	"Category": "Other",
+	"CreatedBy": "Jasper Flick & Adam Maciejewski ",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": false,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Modules": [
+		{
+			"Name": "NoiseGen",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
