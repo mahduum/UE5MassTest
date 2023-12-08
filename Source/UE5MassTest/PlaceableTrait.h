@@ -8,9 +8,14 @@
 #include "UObject/Object.h"
 #include "PlaceableTrait.generated.h"
 
-
 USTRUCT()
 struct FNoLocationTag : public FMassTag
+{
+	GENERATED_BODY()
+};
+
+USTRUCT()
+struct FIsSelectedTag : public FMassTag
 {
 	GENERATED_BODY()
 };

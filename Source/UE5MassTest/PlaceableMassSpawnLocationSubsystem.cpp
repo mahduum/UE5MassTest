@@ -1,6 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "PlaceableMassSpawnLocationSubsystem.h"
 
+#include "MassSpawnerSubsystem.h"
 #include "PlaceablesObserver.h"
 //DEFINE_LOG_CATEGORY(LogPlaceableMassSpawn)
 
@@ -82,4 +83,12 @@ void UPlaceableMassSpawnLocationSubsystem::AddSpawnLocation(FVector InLocation)
 {
 	CurrentSpawnLocation = InLocation;
 	OnSpawnLocationReceived.Broadcast(1);
+}
+
+void UPlaceableMassSpawnLocationSubsystem::MoveTargetLocation(FVector Location)
+{
+	//todo:
+	// send signal to processor with data to move to  or:
+	// just set the variable and system will use it when it runs
+	// HOW TO FIND THE ENTITY WE WANT TO MOVE? Select location, and destination location if first more less match (like on the grid) then deploy movement to entity
 }

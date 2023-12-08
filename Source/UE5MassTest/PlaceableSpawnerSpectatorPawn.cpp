@@ -56,12 +56,16 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager(FVector InLoca
 	{
 		const FMassArchetypeHandle Archetype = EntityTemplate.GetArchetype();
 
+		//EntityTemplate.GetCompositionDescriptor()//todo create from composition
+
 		FMassEntityManager& Manager = UE::Mass::Utils::GetEntityManagerChecked(World);
 		Manager.Initialize();
 		UE_LOG(LogPlaceableSpawner, Display, TEXT("Entity manager retrieved."));
 
 		//todo check if it will work with custom processor
 		const FMassEntityHandle NewItem = Manager.CreateEntity(Archetype);//todo designed to be used by subsystem... ??? Created this way won't have observers
+		//todo try attach visual with: FFarmVisualFragment
+		Manager.GetFragmentDataChecked<FPlaceableFragment>(NewItem).Index = 99;
 		
 		UE_LOG(LogPlaceableSpawner, Display, TEXT("Created new entity with archetype. Archetype is valid: %d. Total entities of archetype count: %d, all entities: %d"),
 			Archetype.IsValid(), Manager.DebugGetArchetypeEntitiesCount(Archetype), Manager.DebugGetEntityCount());
@@ -76,15 +80,13 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager(FVector InLoca
 		const FMassArchetypeCompositionDescriptor& Composition = Manager.GetArchetypeComposition(Archetype);
 		FMassObserverManager Observer = Manager.GetObserverManager();
 		bool HasObservers = Observer.HasObserversForComposition(Composition, EMassObservedOperation::Add);
-		
 		UE_LOG(LogPlaceableSpawner, Display, TEXT("Entity manager direct spawn set fragment location to: %s, has observers: %d, is entity built: %d"),
 			*Manager.GetFragmentDataChecked<FTransformFragment>(NewItem).GetTransform().GetLocation().ToString(), HasObservers, Manager.IsEntityBuilt(NewItem));
 
 		FMassProcessingContext ProcessingContext(Manager, /*TimeDelta=*/0.0f);
-		const FMassEntityManager::FEntityCreationContext CreationContext (1);
-
+		//EntityTemplate.DebugGetArchetypeDescription()
 		UMassSpawnerSubsystem* MassSpawnerSubsystem = UWorld::GetSubsystem<UMassSpawnerSubsystem>(this->GetWorld());
-		UE::Mass::Executor::Run(*InitProcessor, ProcessingContext);
+		//UE::Mass::Executor::Run(*InitProcessor, ProcessingContext);
 	}
 }
 

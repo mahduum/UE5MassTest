@@ -7,10 +7,12 @@
 #include "MassTestFragments.h"
 #include "PlaceableMassSpawnLocationSubsystem.h"
 #include "PlaceableTrait.h"
+#include "Components/CapsuleComponent.h"
+#include "Translators/MassCapsuleComponentTranslators.h"
 
 DEFINE_LOG_CATEGORY(LogPlaceableSpawner);
 
-UPlaceablesObserver::UPlaceablesObserver()
+UPlaceablesObserver::UPlaceablesObserver() : EntityQuery(*this)
 {
 	ExecutionFlags = static_cast<int32>(EProcessorExecutionFlags::All);
 	ObservedType = FPlaceableFragment::StaticStruct();
@@ -26,7 +28,7 @@ void UPlaceablesObserver::ConfigureQueries()
 	EntityQuery.AddRequirement<FAgentRadiusFragment>(EMassFragmentAccess::ReadOnly);
 	//EntityQuery.AddTagRequirement<FNoLocationTag>(EMassFragmentPresence::All);//todo reverse
 
-	EntityQuery.RegisterWithProcessor(*this);
+	//EntityQuery.RegisterWithProcessor(*this);//if no entity query in constructor
 }
 
 void UPlaceablesObserver::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)
@@ -39,11 +41,20 @@ void UPlaceablesObserver::Execute(FMassEntityManager& EntityManager, FMassExecut
 
 		const FVector NewLocation = PlaceableMassSpawnLocationSubsystem->CurrentSpawnLocation;
 		const TArrayView<FTransformFragment> EntityLocationList = Context.GetMutableFragmentView<FTransformFragment>();
+		auto PlaceableFragIndex = Context.GetFragmentView<FPlaceableFragment>().GetData()->Index;//todo make this generational, on each created get num entities or take the index from free
+		//todo cd: list and bump the generation (every time an entity is removed its placeable id is moved to free list (Q: where is the generation stored to be bumped? We leave the data on registered list but we bump the generation up
+		//todo cd: such that old queries won't take on it, but if we create new entity that it can reuse the index from the free list and it will have a different generation that will fit new queries with its new handle (gen + index)
+
+		//TODO SELECTION: Maybe on clicked it will pass the actor ref to the signal system which in turn will run the search signal processor that will identify which clickable entity has been clicked and add a selected tag to it?
 
 		//todo set location to all entities but there will be only one, or we will have provided num entities and the same amount of locations
 		for (int32 EntityIndex = 0; EntityIndex < Context.GetNumEntities(); ++ EntityIndex)
 		{
-			EntityLocationList[EntityIndex].GetMutableTransform().SetLocation(NewLocation + EntityLocationList[EntityIndex].GetTransform().GetLocation());
+			auto FragmentLocation = EntityLocationList[EntityIndex].GetTransform().GetLocation();
+			EntityLocationList[EntityIndex].GetMutableTransform().SetLocation(NewLocation + FragmentLocation);
+			uint32 ComponentId = 0;
+			
+			UE_LOG(LogPlaceableSpawner, Display, TEXT("Initializing location of spawned placeable with capsule comp id: %d, and location: %s"), ComponentId, *FragmentLocation.ToString());
 			//Context.Defer().RemoveTag<FNoLocationTag>(Context.GetEntity(EntityIndex));//todo reverse
 		}
 	});

@@ -124,5 +124,8 @@ public:
 	UFUNCTION(BlueprintSetter, Category="Mass Spawn Location")
 	FORCEINLINE void AddSpawnLocation(FVector InLocation);
 
+	UFUNCTION(BlueprintCallable, Category="Mass Movement")
+	void MoveTargetLocation(FVector Location);
+
 	//todo get entity on selected location from grid, make selection processor, modify selected entities
 };
