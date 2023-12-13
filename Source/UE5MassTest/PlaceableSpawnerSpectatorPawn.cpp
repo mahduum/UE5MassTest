@@ -97,10 +97,10 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntitySpawnSubsystem(FVector
 	const TSubclassOf<UMassProcessor> SpawnDataProcessor = UMassSpawnLocationProcessor::StaticClass();
 	FInstancedStruct SpawnData;
 	SpawnData.InitializeAs<FMassTransformsSpawnData>();
-	auto& [Transforms] = SpawnData.GetMutable<FMassTransformsSpawnData>();
+	FMassTransformsSpawnData& Transforms = SpawnData.GetMutable<FMassTransformsSpawnData>();
 	
-	Transforms.Reserve(NumberToSpawn);
-	FTransform& Transform = Transforms.AddDefaulted_GetRef();
+	Transforms.Transforms.Reserve(NumberToSpawn);
+	FTransform& Transform = Transforms.Transforms.AddDefaulted_GetRef();
 	Transform.SetLocation(InLocation);
 	
 	UE_LOG(LogPlaceableSpawner, Display, TEXT("Spawn location to Entity Spawn System: %s"), *Transform.GetLocation().ToString());
