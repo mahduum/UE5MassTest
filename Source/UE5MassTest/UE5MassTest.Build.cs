@@ -11,7 +11,7 @@ public class UE5MassTest : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
 			"MassCommon", "MassEntity", "MassCrowd", "MassAIBehavior", "MassGameplayDebug", "PluginTest_0206_2001",
 			"MassGameplayExternalTraits", "MassSpawner", "StructUtils", "MassEntityDebugger", "MassSignals", "MassActors",
-			"MassNavigation", "MassMovement"
+			"MassNavigation", "MassMovement", "MassRepresentation"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "MassSpawner", "Core"});
