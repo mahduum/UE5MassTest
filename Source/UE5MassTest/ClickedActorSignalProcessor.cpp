@@ -12,6 +12,7 @@
 #include "MassSignalSubsystem.h"
 #include "VisualLogger/VisualLogger.h"
 
+
 UClickedActorSignalProcessor::UClickedActorSignalProcessor()
 {
 	//todo check if the order is correct
@@ -74,7 +75,6 @@ void UClickedActorSignalProcessor::Execute(FMassEntityManager& EntityManager, FM
 	if (TransientEntitiesToSignal.Num())
 	{
 		UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("Transient entities count on execute deselect query: %d, query matching entities: %d"),
-			
 		TransientEntitiesToSignal.Num(), DeselectQuery.GetNumMatchingEntities(EntityManager));
 		//then clear whatever selections we had before
 		DeselectQuery.ForEachEntityChunk(EntityManager, Context, [this](const FMassExecutionContext& Context)

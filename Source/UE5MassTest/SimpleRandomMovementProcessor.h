@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(meta =(DisplayName="SimpleRandomMovement"))
 class UE5MASSTEST_API USimpleRandomMovementProcessor : public UMassProcessor
 {
 	GENERATED_BODY()
@@ -18,7 +18,7 @@ public:
 
 protected:
 	virtual void ConfigureQueries() override;
-	virtual void Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context);
+	virtual void Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context) override;
 
 private:
 	FMassEntityQuery EntityQuery;

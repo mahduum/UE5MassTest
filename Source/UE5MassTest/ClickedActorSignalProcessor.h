@@ -11,12 +11,12 @@
 namespace UE::Mass::Signals
 {
 	const FName Selected = FName(TEXT("SelectEntity"));
-	const FName Deselected = FName(TEXT("DeselectEntity"));
+	const FName MoveTarget = FName(TEXT("MoveTarget"));
 }
 /**
  * 
  */
-UCLASS()
+UCLASS(meta = (DisplayName = "Mass Click Selection"))
 class UE5MASSTEST_API UClickedActorSignalProcessor : public UMassSignalProcessorBase
 {
 	GENERATED_BODY()

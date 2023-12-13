@@ -2,11 +2,16 @@
 
 
 #include "SimpleRandomMovementProcessor.h"
+
+#include <string>
+
 #include "SimpleRandomMovementTrait.h"
 #include "MassCommonFragments.h"
 #include "MassEntitySubsystem.h"
 #include "MassEntityTemplateRegistry.h"
 #include "MassExecutionContext.h"
+#include "PlaceablesObserver.h"
+#include "VisualLogger/VisualLogger.h"
 
 USimpleRandomMovementProcessor::USimpleRandomMovementProcessor()
 {
@@ -19,6 +24,7 @@ void USimpleRandomMovementProcessor::ConfigureQueries()
 {
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FSimpleMovementFragment>(EMassFragmentAccess::ReadWrite);
+	EntityQuery.RegisterWithProcessor(*this);
 }
 
 void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)
