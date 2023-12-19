@@ -16,9 +16,11 @@ public class UE5MassTest : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "MassSpawner", "Core"});
 
+		CppStandard = CppStandardVersion.Cpp20;
+
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
-		
+
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 

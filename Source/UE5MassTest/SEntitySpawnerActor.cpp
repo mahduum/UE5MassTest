@@ -21,7 +21,7 @@ void ASEntitySpawnerActor::BeginPlay()
 
 void ASEntitySpawnerActor::SpawnEntityFromSubsystem()
 {
-	const FMassEntityTemplate Template = EntityConfig.GetOrCreateEntityTemplate(*GetWorld(), *this);
+	const FMassEntityTemplate Template = EntityConfig.GetOrCreateEntityTemplate(*GetWorld());
 	check(MassSpawnerSubsystem != nullptr);
 
 	TArray<FMassEntityHandle> OutEntities;

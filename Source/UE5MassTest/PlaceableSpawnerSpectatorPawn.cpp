@@ -52,7 +52,7 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager(FVector InLoca
 {
 	const UWorld& World = *(this->GetWorld());
 
-	if (const FMassEntityTemplate& EntityTemplate = EntityConfig->GetConfig().GetOrCreateEntityTemplate(*(this->GetWorld()), *this); EntityTemplate.IsValid())
+	if (const FMassEntityTemplate& EntityTemplate = EntityConfig->GetConfig().GetOrCreateEntityTemplate(*(this->GetWorld())); EntityTemplate.IsValid())
 	{
 		const FMassArchetypeHandle Archetype = EntityTemplate.GetArchetype();
 
@@ -105,7 +105,7 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntitySpawnSubsystem(FVector
 	
 	UE_LOG(LogPlaceableSpawner, Display, TEXT("Spawn location to Entity Spawn System: %s"), *Transform.GetLocation().ToString());
 	
-	if (const FMassEntityTemplate& EntityTemplate = EntityConfig->GetConfig().GetOrCreateEntityTemplate(*(this->GetWorld()), *this); EntityTemplate.IsValid())
+	if (const FMassEntityTemplate& EntityTemplate = EntityConfig->GetConfig().GetOrCreateEntityTemplate(*(this->GetWorld())); EntityTemplate.IsValid())
 	{
 		TArray<FMassEntityHandle> SpawnedHandles;
 		//SpawnedHandles.AddDefaulted_GetRef();

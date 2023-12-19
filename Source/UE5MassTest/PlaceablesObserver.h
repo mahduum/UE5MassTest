@@ -31,3 +31,18 @@ protected:
 private:
 	TObjectPtr<UPlaceableMassSpawnLocationSubsystem> PlaceableMassSpawnLocationSubsystem;
 };
+
+UCLASS()
+class UE5MASSTEST_API UCharacterMovementWrapperObserver : public UMassObserverProcessor
+{
+	GENERATED_BODY()
+public:
+	UCharacterMovementWrapperObserver();
+
+protected:
+	virtual void ConfigureQueries() override;
+	//virtual void PostInitProperties() override;
+	virtual void Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context) override;
+
+	FMassEntityQuery EntityQuery;
+};

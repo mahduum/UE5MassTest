@@ -13,7 +13,7 @@
 				"MassEntity",
 				"Engine"
 			]
-		}
+		},
 	],
 	"Plugins": [
 		{
@@ -50,6 +50,10 @@
 		},
 		{
 			"Name": "NoiseGen",
+			"Enabled": true
+		},
+		{
+			"Name": "MassExtensions",
 			"Enabled": true
 		}
 	]

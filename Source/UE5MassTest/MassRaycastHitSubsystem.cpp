@@ -69,7 +69,7 @@ bool UMassRaycastHitSubsystem::TrySendSelectSignal(AActor* HitActor) const
 
 		if (Entity == FMassEntityManager::InvalidEntity || Entity.IsSet() == false)
 		{
-			UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("%s: actor is not a valid entity!"), *HitActor->GetName());
+			UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("%s: actor is not a valid entity! Entity is set: %d"), *HitActor->GetName(), Entity.IsSet());
 			return false;
 		}
 			

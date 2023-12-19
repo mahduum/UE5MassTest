@@ -9,6 +9,7 @@
 #include "PlaceableTrait.h"
 #include "Components/CapsuleComponent.h"
 #include "Translators/MassCapsuleComponentTranslators.h"
+#include "Translators/MassCharacterMovementTranslators.h"
 
 DEFINE_LOG_CATEGORY(LogPlaceableSpawner);
 
@@ -66,4 +67,29 @@ void UPlaceablesObserver::Initialize(UObject& InOwner)//called with the owner of
 	Super::Initialize(InOwner);
 	const UWorld* World = InOwner.GetWorld();
 	PlaceableMassSpawnLocationSubsystem = UWorld::GetSubsystem<UPlaceableMassSpawnLocationSubsystem>(World);
+}
+
+//==============================CharacterMovementWrapperObserver=================================//
+
+UCharacterMovementWrapperObserver::UCharacterMovementWrapperObserver() : EntityQuery(*this)
+{
+	ExecutionFlags = static_cast<int32>(EProcessorExecutionFlags::All);
+	ObservedType = FCharacterMovementComponentWrapperFragment::StaticStruct();
+	Operation = EMassObservedOperation::Add;
+}
+
+void UCharacterMovementWrapperObserver::ConfigureQueries()
+{
+	EntityQuery.AddRequirement<FCharacterMovementComponentWrapperFragment>(EMassFragmentAccess::ReadOnly);
+	EntityQuery.AddRequirement<FPlaceableFragment>(EMassFragmentAccess::ReadOnly);
+}
+
+void UCharacterMovementWrapperObserver::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)
+{
+	UE_LOG(LogPlaceableSpawner, Display, TEXT("Initializing FCharacterMovementComponentWrapperFragments."))
+
+	EntityQuery.ForEachEntityChunk(EntityManager, Context, [](FMassExecutionContext& Context)
+	{
+		UE_LOG(LogPlaceableSpawner, Display, TEXT("FCharacterMovementComponentWrapperFragments count on added new fragments: %d"), Context.GetNumEntities());
+	});
 }
