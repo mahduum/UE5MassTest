@@ -49,7 +49,6 @@ void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, 
 			}
 			else
 			{
-				
 				Transform.SetLocation(CurrentLocation + TargetVector.GetSafeNormal() * 400 * WorldDeltaTime);
 			}
 		}
