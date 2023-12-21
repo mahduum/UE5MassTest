@@ -43,13 +43,13 @@ void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, 
 			FVector CurrentLocation = Transform.GetLocation();
 			FVector TargetVector = MoveTarget - CurrentLocation;
 
-			if (TargetVector.Size() <= 20.f)
+			if (TargetVector.Size() <= 100.f)
 			{
 				MoveTarget = FVector(FMath::RandRange(-1.f, 1.f) * 1000.f, FMath::RandRange(-1.f, 1.f) * 1000.f, CurrentLocation.Z);
 			}
 			else
 			{
-				Transform.SetLocation(CurrentLocation + TargetVector.GetSafeNormal() * 400 * WorldDeltaTime);
+				Transform.SetLocation(CurrentLocation + TargetVector.GetSafeNormal() * 100 * WorldDeltaTime);
 			}
 		}
 	}));
