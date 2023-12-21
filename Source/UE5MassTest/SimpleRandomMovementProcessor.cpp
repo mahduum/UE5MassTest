@@ -33,7 +33,7 @@ void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, 
 	{
 		const TArrayView<FTransformFragment> TransformsList = Context.GetMutableFragmentView<FTransformFragment>();
 		const TArrayView<FSimpleMovementFragment> SimpleMovementList = Context.GetMutableFragmentView<FSimpleMovementFragment>();
-		const float WorldDeltaTime = Context.GetDeltaTimeSeconds();
+		const double WorldDeltaTime = Context.GetDeltaTimeSeconds();
 
 		for (int32 EntityIndex = 0; EntityIndex < Context.GetNumEntities(); ++EntityIndex)
 		{
@@ -49,7 +49,8 @@ void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, 
 			}
 			else
 			{
-				Transform.SetLocation(CurrentLocation + (TargetVector.GetSafeNormal() * 400.F * WorldDeltaTime));
+				
+				Transform.SetLocation(CurrentLocation + TargetVector.GetSafeNormal() * 400 * WorldDeltaTime);
 			}
 		}
 	}));

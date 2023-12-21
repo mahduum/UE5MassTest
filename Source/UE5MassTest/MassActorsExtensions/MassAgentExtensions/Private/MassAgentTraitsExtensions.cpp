@@ -53,6 +53,10 @@ void UMassAgentAllMovementSyncTrait::BuildTemplate(FMassEntityTemplateBuildConte
 			{
 				UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement MassToActor init set in All Movement Sync Trait, Pawn Velocity set to: %s, magnitude: %f"), *VelocityFragment.Value.ToString(), VelocityFragment.Value.Size())
 				MovementComp->Velocity = VelocityFragment.Value;
+				MovementComp->UpdateComponentVelocity();
+				MovementComp->bAutoUpdateTickRegistration = true;
+				MovementComp->bAutoRegisterPhysicsVolumeUpdates = true;
+				MovementComp->MovementState.bCanWalk = true;
 			}
 			// actor is the authority
 			else

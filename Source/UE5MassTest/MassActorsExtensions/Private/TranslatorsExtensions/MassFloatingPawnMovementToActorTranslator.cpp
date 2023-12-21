@@ -41,11 +41,14 @@ void UMassFloatingPawnMovementToActorTranslator::Execute(FMassEntityManager& Ent
 		{
 			if (UFloatingPawnMovement* AsMovementComponent = ComponentList[i].Component.Get())
 			{
-				UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement component request direct move with value: %f, location: %s, for entity index: %d, actor name: %s"), VelocityList[i].Value.Size(), *TransformList[i].GetTransform().GetLocation().ToString(), i, *AsMovementComponent->GetOwner()->GetName());
-				AsMovementComponent->RequestDirectMove(/*VelocityList[i].Value*/FVector(500.0f, 0, 0 ), /*bForceMaxSpeed=*/false);
-				AsMovementComponent->AddInputVector(FVector(0.2, 0, 0 ));
-				AsMovementComponent->UpdateComponentVelocity();//or set placed in world or spawned
-				//or: MoveUpdatedComponent
+				if(VelocityList[i].Value.Size() > 0)
+				{
+					UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement component request direct move with value: %s, for entity index: %d, actor name: %s"), *VelocityList[i].Value.ToString(), i, *AsMovementComponent->GetOwner()->GetName());
+				}
+				//AsMovementComponent->RequestDirectMove(/*VelocityList[i].Value*/FVector(500.0f, 0, 0 ), /*bForceMaxSpeed=*/false);
+				AsMovementComponent->RequestDirectMove(VelocityList[i].Value, /*bForceMaxSpeed=*/false);
+				//AsMovementComponent->AddInputVector(VelocityList[i].Value.GetSafeNormal());
+				//AsMovementComponent->UpdateComponentVelocity();//or set placed in world or spawned
 			}
 		}
 		
