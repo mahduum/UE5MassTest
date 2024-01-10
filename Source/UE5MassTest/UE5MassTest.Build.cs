@@ -11,13 +11,14 @@ public class UE5MassTest : ModuleRules
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
 			"MassCommon", "MassEntity", "MassCrowd", "MassAIBehavior", "MassGameplayDebug", "PluginTest_0206_2001",
 			"MassGameplayExternalTraits", "MassSpawner", "StructUtils", "MassEntityDebugger", "MassSignals", "MassActors",
-			"MassNavigation", "MassMovement", "MassRepresentation"
+			"MassNavigation", "MassMovement", "MassRepresentation", "NavigationSystem", "Navmesh"
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] { "MassSpawner", "Core"});
 
 		CppStandard = CppStandardVersion.Cpp20;
 
+		PublicIncludePaths.AddRange(new string[]{"UE5MassTest/MassNavigationExtensions/MassNavigationPath/Public"});
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 

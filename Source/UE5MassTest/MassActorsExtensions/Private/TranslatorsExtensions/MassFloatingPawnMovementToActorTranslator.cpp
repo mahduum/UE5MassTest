@@ -43,7 +43,7 @@ void UMassFloatingPawnMovementToActorTranslator::Execute(FMassEntityManager& Ent
 			{
 				if(VelocityList[i].Value.Size() > 0)
 				{
-					UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement component request direct move with value: %s, for entity index: %d, actor name: %s"), *VelocityList[i].Value.ToString(), i, *AsMovementComponent->GetOwner()->GetName());
+					//UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement component request direct move with value: %s, for entity index: %d, actor name: %s"), *VelocityList[i].Value.ToString(), i, *AsMovementComponent->GetOwner()->GetName());
 				}
 				//AsMovementComponent->RequestDirectMove(/*VelocityList[i].Value*/FVector(500.0f, 0, 0 ), /*bForceMaxSpeed=*/false);
 				AsMovementComponent->RequestDirectMove(VelocityList[i].Value, /*bForceMaxSpeed=*/false);

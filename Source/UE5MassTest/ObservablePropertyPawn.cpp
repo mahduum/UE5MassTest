@@ -49,10 +49,10 @@ void AObservablePropertyPawn::PostEditChangeProperty(FPropertyChangedEvent& Prop
 		FVector Vel = FVector::Zero();
 		if(auto Comp = Cast<UFloatingPawnMovement>(Object))
 		{
-			UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement Velocity mag changed to: %f"), Vel.Size());
+			//UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement Velocity mag changed to: %f"), Vel.Size());
 			Vel = Comp->Velocity;
 		}
-		UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement Velocity mag changed to: %f"), Vel.Size());
+		//UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement Velocity mag changed to: %f"), Vel.Size());
 	}
 	
 	Super::PostEditChangeProperty(PropertyChangedEvent);

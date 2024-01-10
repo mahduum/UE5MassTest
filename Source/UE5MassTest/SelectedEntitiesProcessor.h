@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "MassProcessor.h"
 #include "UObject/Object.h"
+#include "AI/Navigation/NavigationTypes.h"
 #include "SelectedEntitiesProcessor.generated.h"
 
 /**

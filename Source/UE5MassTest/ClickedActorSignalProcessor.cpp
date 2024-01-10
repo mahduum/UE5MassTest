@@ -48,7 +48,7 @@ void UClickedActorSignalProcessor::SignalEntities(FMassEntityManager& EntityMana
 
 			UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("%s: Received signals: %s"), *Entity.DebugGetDescription(), *Names);
 
-			TransientEntitiesToSignal.Add(Entity);
+			TransientEntitiesToSignal.Add(Entity);//used as marker for deselection
 			Context.Defer().AddTag<FIsSelectedTag>(Entity);
 		}
 	});

@@ -22,7 +22,7 @@ void UMassRaycastHitSubsystem::SingleLineTraceActorToEntity(APlayerController* P
 {
 	SingleTraceForSignal(UE::Mass::Signals::Selected, PlayerController, TraceLength, bDebugQuery);
 }
-
+//TODO: return or cache click coords
 void UMassRaycastHitSubsystem::SingleLineTraceMoveTarget(APlayerController* PlayerController, float TraceLength,
                                                          bool bDebugQuery)
 {

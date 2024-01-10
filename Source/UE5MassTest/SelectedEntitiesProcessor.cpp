@@ -55,6 +55,7 @@ void USelectedEntitiesProcessor::Execute(FMassEntityManager& EntityManager, FMas
 			MoveTarget.IntentAtGoal = EMassMovementAction::Stand;
 			MoveTarget.DesiredSpeed.Set(400.0f);
 			MoveTarget.DistanceToGoal = FVector::Distance(CurrentLocation[EntityIndex].GetTransform().GetLocation(), MoveTargetLocation);
+			MoveTarget.Forward = (MoveTargetLocation - CurrentLocation[EntityIndex].GetTransform().GetLocation()).GetSafeNormal();//Forward vector is necessary to be set for steering
 			const UWorld* World = EntityManager.GetWorld();
 			check(World);
 			MoveTarget.CreateNewAction(EMassMovementAction::Move, *World);

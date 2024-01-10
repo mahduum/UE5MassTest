@@ -4,6 +4,7 @@
 #include "MassSpawnerSubsystem.h"
 #include "PlaceablesObserver.h"
 //DEFINE_LOG_CATEGORY(LogPlaceableMassSpawn)
+const uint16 FPlaceableSpawnLocationDataHandle::InvalidGeneration = 0;
 
 FPlaceableSpawnLocationDataHandle UPlaceableMassSpawnLocationSubsystem::RegisterSpawnLocationData(FVector& InLocationData)//todo this must be an Actor ref to make sense like AZoneGraphData with subsystem interface APlaceableSpawner
 {

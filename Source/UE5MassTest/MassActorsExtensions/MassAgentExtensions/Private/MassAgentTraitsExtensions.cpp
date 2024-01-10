@@ -44,14 +44,14 @@ void UMassAgentAllMovementSyncTrait::BuildTemplate(FMassEntityTemplateBuildConte
 
 		if (UFloatingPawnMovement* MovementComp = FMassAgentComponentsExtractor::AsComponent<UFloatingPawnMovement>(Owner))
 		{
-			UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement component found and assigned in All Movement Sync Trait."))
+			//UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement component found and assigned in All Movement Sync Trait."))
 
 			WrapperFragment.Component = MovementComp;
 
 			FMassVelocityFragment& VelocityFragment = EntityView.GetFragmentData<FMassVelocityFragment>();
 			if (TranslationDirection == EMassTranslationDirection::MassToActor)
 			{
-				UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement MassToActor init set in All Movement Sync Trait, Pawn Velocity set to: %s, magnitude: %f"), *VelocityFragment.Value.ToString(), VelocityFragment.Value.Size())
+				//UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement MassToActor init set in All Movement Sync Trait, Pawn Velocity set to: %s, magnitude: %f"), *VelocityFragment.Value.ToString(), VelocityFragment.Value.Size())
 				MovementComp->Velocity = VelocityFragment.Value;
 				MovementComp->UpdateComponentVelocity();
 				MovementComp->bAutoUpdateTickRegistration = true;
@@ -61,7 +61,7 @@ void UMassAgentAllMovementSyncTrait::BuildTemplate(FMassEntityTemplateBuildConte
 			// actor is the authority
 			else
 			{
-				UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement ActorToMass init set in All Movement Sync Trait, Mass Velocity set to: %s"), *MovementComp->Velocity.ToString())
+				//UE_LOG(LogPlaceableSpawner, Display, TEXT("Floating Pawn Movement ActorToMass init set in All Movement Sync Trait, Mass Velocity set to: %s"), *MovementComp->Velocity.ToString())
 				VelocityFragment.Value = MovementComp->Velocity;
 			}
 		}
