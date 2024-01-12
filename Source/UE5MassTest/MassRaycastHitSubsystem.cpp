@@ -92,6 +92,7 @@ void UMassRaycastHitSubsystem::SetMoveTarget(const FHitResult& HitResult) const
 	
 	const FInstancedStruct MoveTarget = FInstancedStruct::Make(HitResult.Location);
 	ProcessingContext.AuxData = MoveTarget;
+
 	UE::Mass::Executor::Run(*MassSelectedProcessor, ProcessingContext);
 }
 

@@ -7,6 +7,7 @@
 #include "Subsystems/WorldSubsystem.h"
 #include "MassPathFinderSubsystem.generated.h"
 
+class UMassActorSubsystem;
 /**
  * 
  */
@@ -29,4 +30,6 @@ public:
 protected:
 	UPROPERTY()
 	TObjectPtr<UMassNavigationDataStorageSubsystem> NavStorageSubsystem;
+	UPROPERTY()
+	TObjectPtr<UMassActorSubsystem> ActorSubsystem;
 };

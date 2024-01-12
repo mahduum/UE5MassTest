@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MassCommonTypes.h"
+#include "MassNavigationTypes.h"
 #include "UObject/Object.h"
 #include "MassNavigationExtTypes.generated.h"
 
@@ -363,4 +365,43 @@ struct UE5MASSTEST_API FMassNavigationDataStorage//FZoneGraphStorage
 	//
 	// // The handle that this storage represents, updated when data is registered to ZoneGraphSubsystem, used for query results.
 	FMassNavigationPathDataHandle DataHandle;
+};
+
+
+USTRUCT()
+struct UE5MASSTEST_API FMassNavigationTargetLocation
+{
+	GENERATED_BODY()
+
+	void Reset()
+	{
+		PathLaneHandle.Reset();
+		bMoveReverse = false;
+		TargetDistance = 0.0f;
+		EndOfPathPosition.Reset();
+		AnticipationDistance.Set(50.0f);
+		EndOfPathIntent = EMassMovementAction::Move;
+	}
+
+	/** Current lane handle. (Could be debug only) */
+	FMassNavigationPathLaneHandle PathLaneHandle;
+	
+	/** Target distance along current lane, equal to distance along the lane plus planned next move distance
+	 * in case of mass nav ext this distance for now will be the distance to final target along the path. */
+	float TargetDistance = 0.0f;
+	
+	/** Optional end of path location. */
+	TOptional<FVector> EndOfPathPosition;
+
+	/** Optional end of path direction, used only if EndOfPathPosition is set. */
+	TOptional<FVector> EndOfPathDirection;
+
+	/** If start or end of path is off-lane, the distance along the lane is pushed forward/back along the lane to make smoother transition. */
+	FMassInt16Real AnticipationDistance = FMassInt16Real(50.0f);
+
+	/** True, if we're moving reverse along the lane. */
+	bool bMoveReverse = false;
+	
+	/** Movement intent at the end of the path */
+	EMassMovementAction EndOfPathIntent = EMassMovementAction::Move;
 };

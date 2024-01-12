@@ -33,7 +33,7 @@ struct UE5MASSTEST_API FMassNavigationPathLaneLocationFragment : public FMassFra
 	FMassNavigationPathLaneHandle PathHandle;//ZoneGraph types//FMassNavigationPathLaneHandle
 	
 	/** Distance along current lane. */
-	float DistanceAlongPath = 0.0f;
+	float DistanceAlongPathLane = 0.0f;
 	
 	/** Cached lane length, used for clamping and testing if at end of lane. */
 	float PathLength = 0.0f;

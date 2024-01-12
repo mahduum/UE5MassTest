@@ -76,6 +76,12 @@ void FMassNavigationCachedPathLaneFragment::CachePathLaneData(const FMassNavigat
 	// If cached data contains the request part of the lane, early out.
 	const float InflatedStartDistance = FMath::Max(0.0f, StartDistance - InflateDistance);
 	const float InflatedEndDistance = FMath::Min(EndDistance + InflateDistance, CurrentLaneLength);
+
+	if(ensureMsgf(PathLanePointProgressions.IsEmpty() || PathLanePoints.IsEmpty() || PathLaneTangentVectors.IsEmpty(), TEXT("Some points array are empty!")))
+	{
+		return;
+	}
+	
 	if (PathLaneHandle == CurrentPathLaneHandle
 		&& NumPoints > 0
 		&& InflatedStartDistance >= PathLanePointProgressions[0].Get()
@@ -92,6 +98,11 @@ void FMassNavigationCachedPathLaneFragment::CachePathLaneData(const FMassNavigat
 	PathLaneLength = CurrentLaneLength;
 
 	const int32 LaneNumPoints = Lane.PointsEnd - Lane.PointsBegin;
+	if (ensureMsgf(LaneNumPoints < 2, TEXT("Inadequate number of lane points: %d"), LaneNumPoints))
+	{
+		return;
+	}
+	
 	if (LaneNumPoints <= (int32)MaxPoints)
 	{
 		// If we can fit all the lane's points, just do a copy.
