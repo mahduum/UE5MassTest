@@ -44,7 +44,21 @@ namespace MassNavigationExt::Actions
 		MoveTarget.IntentAtGoal = EMassMovementAction::Stand;
 		MoveTarget.DesiredSpeed.Set(DesiredSpeed);
 
+			
+		const FString AllProgressions = FString::JoinBy(NavStorage->PathLanePointsProgressions, TEXT(", "),
+			[](float Progression)
+			{ return FString::Printf (TEXT("%f"), Progression); });
+		const FString PathLanesPointsCount = FString::JoinBy(NavStorage->PathLanes, TEXT(", "),
+			[](FPathLaneData Lane)
+			{ return FString::Printf (TEXT("%d"), Lane.GetNumPoints()); });
+		UE_VLOG(&NavStorageSubsystem, LogMassNavigationExt, Log, TEXT("All available progressions when caching lane: [%s], path lanes count: %d, path lanes points count: %s"), *AllProgressions, NavStorage->PathLanes.Num(), *PathLanesPointsCount);
+
 		CachedPathLaneFragment.CachePathLaneData(*NavStorage, PathLaneLocationFragment.PathHandle, PathLaneLocationFragment.DistanceAlongPathLane, PathRequest.TargetDistance, InflateDistancePathRequest);
+		
+		const FString CachedLanePointProgressions = FString::JoinBy(CachedPathLaneFragment.PathLanePointProgressions, TEXT(", "), [](const FMassInt16Real10& Point) { return FString::Printf(TEXT("%f"), Point.Get()); });
+		UE_VLOG(&NavStorageSubsystem, LogMassNavigationExt, Log, TEXT("Entity [%s] caching lane, points progressions: [%s], lane distance along path location fagment: [%f]."),
+			*EntityHandle.DebugGetDescription(), *CachedLanePointProgressions, PathLaneLocationFragment.DistanceAlongPathLane);
+		
 		if(ShortPathFragment.RequestPath(CachedPathLaneFragment, PathRequest, PathLaneLocationFragment.DistanceAlongPathLane, AgentRadius))
 		{
 			MoveTarget.IntentAtGoal = ShortPathFragment.EndOfPathIntent;
@@ -59,6 +73,7 @@ namespace MassNavigationExt::Actions
 		}
 
 		UE_VLOG(Requester, LogMassNavigationExt, Log, TEXT("Entity [%s] successfully requested %s"), *EntityHandle.DebugGetDescription(), *MoveTarget.ToString());
+		UE_CVLOG(true, Requester, LogMassNavigationExt, Log, TEXT("Entity [%s] successfully requested with cvlog %s"), *EntityHandle.DebugGetDescription(), *MoveTarget.ToString());
 		return true;
 	}
 }

@@ -1,5 +1,6 @@
 ﻿#include "MassNavigationExtFragments.h"
 
+#include "MassNavigationDataStorageSubsystem.h"
 #include "MassPathQuery.h"
 
 namespace MassNavigationExt::MassNavigationPath

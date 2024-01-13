@@ -45,7 +45,11 @@ void UMassPathFinderSubsystem::AsyncFindMassPath(const FVector& StartLocation, c
 			{
 				if(Result == ENavigationQueryResult::Success)
 				{
-					UE_VLOG_UELOG(this, LogMassNavigationExt, Log, TEXT("Mass path has been found with points count: %d"), NavPathSharedPtr->GetPathPoints().Num());
+					const FString PointsCoords = FString::JoinBy(NavPathSharedPtr->GetPathPoints(), TEXT(", "), [](const FNavPathPoint& Point)
+					{
+						return Point.Location.ToString();
+					});
+					UE_VLOG_UELOG(this, LogMassNavigationExt, Log, TEXT("Mass path has been found with points count: %d, points coords: [%s]"), NavPathSharedPtr->GetPathPoints().Num(), *PointsCoords);
 				}
 				else
 				{
@@ -57,10 +61,8 @@ void UMassPathFinderSubsystem::AsyncFindMassPath(const FVector& StartLocation, c
 				TArray<FNavPathPoint> Points = NavPathSharedPtr->GetPathPoints();
 				TArray<FVector> Locations;
 				TArray<FPathSplinePoint> PathSplinePoints;
-				Locations.SetNum(Points.Num());//only for debug
 
 				//PathSplinePoints are what in TessellateSplineShape method are CurvePoints, here they are used directly as the nav path is not curved spline
-				PathSplinePoints.SetNum(Points.Num());//todo add up vectors and right vectors when path is created, make method
 
 				for (auto It = Points.CreateIterator(); It; ++It )
 				{

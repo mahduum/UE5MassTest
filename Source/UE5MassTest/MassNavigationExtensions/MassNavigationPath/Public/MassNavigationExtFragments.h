@@ -29,7 +29,7 @@ struct UE5MASSTEST_API FMassNavigationPathLaneLocationFragment : public FMassFra
 {
 	GENERATED_BODY()
 
-	/** Handle to current lane. */
+	/** Handle to current lane, originally in zone graph is a handle to the geometry object holding all the points and data for given lane that was created by offsetting the zone path. */
 	FMassNavigationPathLaneHandle PathHandle;//ZoneGraph types//FMassNavigationPathLaneHandle
 	
 	/** Distance along current lane. */
@@ -227,6 +227,23 @@ struct UE5MASSTEST_API FMassNavigationShortPathFragment : public FMassFragment
 	{
 		// @todo MassMovement: should we remove NumPoints == 0? The logic used to be quite different when it was really needed.
 		return NumPoints == 0 || bDone;
+	}
+
+	bool HasNoProgress() const
+	{
+		return ProgressDistance <= 0;
+	}
+
+	bool IsProgressingOrAboutToBeDone()
+	{
+		check(NumPoints > 0);
+		return ProgressDistance <= Points[NumPoints - 1].Distance.Get();
+	}
+
+	bool HasProgressedPastLastPoint()
+	{
+		check(NumPoints > 0);
+		return ProgressDistance > Points[NumPoints - 1].Distance.Get();
 	}
 
 #if WITH_MASSGAMEPLAY_DEBUG

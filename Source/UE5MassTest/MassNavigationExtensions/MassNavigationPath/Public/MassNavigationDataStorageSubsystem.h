@@ -78,3 +78,9 @@ protected:
 
 	bool bInitialized;
 };
+
+template<>
+struct TMassExternalSubsystemTraits<UMassNavigationDataStorageSubsystem>
+{
+	enum { GameThreadOnly = false };
+};
