@@ -54,4 +54,20 @@ namespace MassNavigationExt::MassNavigationPath::Query
 
 		return true;
 	}
+
+	bool GetLaneLength(const FMassNavigationDataStorage& Storage, const uint32 LaneIndex, float& OutLength)
+	{
+		const FPathLaneData& Lane = Storage.PathLanes[LaneIndex];
+		OutLength = Storage.PathLanePointsProgressions[Lane.PointsEnd - 1];
+		return true;
+	}
+
+	bool GetLaneLength(const FMassNavigationDataStorage& Storage, const FMassNavigationPathLaneHandle LaneHandle, float& OutLength)
+	{
+		if (!EnsureLaneHandle(Storage, LaneHandle, __FUNCTION__))
+		{
+			return false;
+		}
+		return GetLaneLength(Storage, LaneHandle.Index, OutLength);
+	}
 }

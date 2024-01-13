@@ -138,6 +138,14 @@ void UMassNavPathFollowProcessor::Execute(FMassEntityManager& EntityManager, FMa
 						//use progress alpha to interpolate total distance between two points along total lane distance
 						PathLaneLocation.DistanceAlongPathLane = FMath::Min(FMath::Lerp(CurrPoint.DistanceAlongLane.Get(), NextPoint.DistanceAlongLane.Get(), T), PathLaneLocation.PathLength);
 
+						UE_CVLOG(bDisplayDebug, this, LogMassNavigationExt, Verbose, TEXT("Entity [%s] lerping distance along lange from current: %.1f to next: %.1f, by alpha: %.1f, at path length: %.1f"),
+							*Entity.DebugGetDescription(),
+							CurrPoint.DistanceAlongLane.Get(),
+							NextPoint.DistanceAlongLane.Get(),
+							T,
+							PathLaneLocation.PathLength
+							);
+
 						MoveTarget.Center = FMath::Lerp(CurrPoint.Position, NextPoint.Position, T);
 						MoveTarget.Forward = FMath::Lerp(CurrPoint.Tangent.GetVector(), NextPoint.Tangent.GetVector(), T).GetSafeNormal();
 						MoveTarget.DistanceToGoal = ShortPath.Points[LastPointIndex].Distance.Get() - FMath::Lerp(CurrPoint.Distance.Get(), NextPoint.Distance.Get(), T);
@@ -173,10 +181,8 @@ void UMassNavPathFollowProcessor::Execute(FMassEntityManager& EntityManager, FMa
 							UE_VLOG(this, LogMassNavigationExt, Warning, TEXT("Entity [%s] has a valid handle to the next paht lane but crossing from path to another is not implemented!"), *Entity.DebugGetDescription());
 						}
 
+						ShortPath.bDone = true;
 					}
-
-					ShortPath.bDone = true;
-
 					//send signals, how should respond?
 					//how is this pocessor prompted to run?
 				}

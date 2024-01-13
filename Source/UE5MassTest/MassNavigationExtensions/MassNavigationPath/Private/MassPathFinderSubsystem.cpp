@@ -9,6 +9,7 @@
 #include "MassNavigationExtFragments.h"
 #include "MassNavigationExtUtils.h"
 #include "MassNavigationFragments.h"
+#include "MassPathQuery.h"
 #include "NavigationSystem.h"
 
 
@@ -224,6 +225,13 @@ void UMassPathFinderSubsystem::AsyncFindMassPath(const FVector& StartLocation, c
 					//object and was only needed to retrieve new path points data.
 					int32 PathLaneIndex = Storage.PathLanes.Num() - 1;
 					PathLaneLocationFragment.PathHandle = FMassNavigationPathLaneHandle(PathLaneIndex, Storage.DataHandle);//FMassNavigationPathLaneLocation not set???
+					float LaneLength = 0.f;
+					if(!MassNavigationExt::MassNavigationPath::Query::GetLaneLength(Storage, PathLaneIndex, LaneLength))
+					{
+						UE_LOG(LogMassNavigationExt, Error, TEXT("Lane length not found in storage!"));
+					}
+					
+					PathLaneLocationFragment.PathLength = LaneLength;
 					
 					//modify path request that is in the fragment:
 					FMassNavigationShortPathRequest& ShortPathRequest = ShortPathRequestFragment.PathRequest;
