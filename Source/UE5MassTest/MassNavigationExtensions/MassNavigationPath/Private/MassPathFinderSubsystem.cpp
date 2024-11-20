@@ -272,6 +272,13 @@ void UMassPathFinderSubsystem::AsyncFindMassPath(const FVector& StartLocation, c
 			});
 		const FPathFindingQuery Query (Agent, *NavData, StartLocation, EndLocation);
 		NavSystem->FindPathAsync(FNavAgentProperties::DefaultProperties/*Agent->GetNavAgentPropertiesRef()*/, Query, QueryDelegate, EPathFindingMode::Regular);
+
+		// AsyncTask(ENamedThreads::GameThread, [this, NavSystem, Query, QueryDelegate]()
+		// {
+		// 	const FPathFindingResult Result = NavSystem->FindPathSync(FNavAgentProperties::DefaultProperties, Query,
+		// 	                                                    EPathFindingMode::Regular);
+		// 	QueryDelegate.Execute(0, Result.Result, Result.Path);
+		// });
 	}
 }
 
