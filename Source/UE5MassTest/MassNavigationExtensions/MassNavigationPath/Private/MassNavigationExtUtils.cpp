@@ -26,7 +26,7 @@ namespace MassNavigationExt::Actions
 		MoveTarget.DistanceToGoal = 0.0f;
 		MoveTarget.DesiredSpeed.Set(0.0f);
 
-		if (!ensureMsgf(MoveTarget.GetCurrentAction() == EMassMovementAction::Move, TEXT("Expecting action 'Move': Invalid action %s"), MoveTarget.GetCurrentAction()))
+		if (!ensureMsgf(MoveTarget.GetCurrentAction() == EMassMovementAction::Move, TEXT("Expecting action 'Move': Invalid action %d"), (uint8)MoveTarget.GetCurrentAction()))
 		{
 			return false;
 		}

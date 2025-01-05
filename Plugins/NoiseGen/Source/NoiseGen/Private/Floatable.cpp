@@ -31,7 +31,7 @@ bool IFloatable::IsPendingKillOrDestroyed()
 {
 	if(const UObject* floatable = Cast<UObject>(this))
 	{
-		return floatable->IsPendingKillOrUnreachable();
+		return IsValid(floatable);
 	}
 	return true;
 } 

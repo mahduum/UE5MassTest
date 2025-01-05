@@ -5,6 +5,7 @@
 
 #include "MassSignalSubsystem.h"
 #include "MassCommonTypes.h"
+#include "MassDebugger.h"
 #include "MassExecutionContext.h"
 #include "MassNavigationDataStorageSubsystem.h"
 #include "MassNavigationExtFragments.h"

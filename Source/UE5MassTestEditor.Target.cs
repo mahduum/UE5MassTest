@@ -8,7 +8,7 @@ public class UE5MassTestEditorTarget : TargetRules
 	public UE5MassTestEditorTarget( TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Editor;
-		DefaultBuildSettings = BuildSettingsVersion.V2;
+		DefaultBuildSettings = BuildSettingsVersion.V5;
 		ExtraModuleNames.AddRange( new string[] { "UE5MassTest" } );
 		RegisterModulesCreatedByRider();
 	}
