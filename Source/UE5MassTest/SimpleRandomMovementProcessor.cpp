@@ -14,7 +14,7 @@
 #include "PlaceablesObserver.h"
 #include "VisualLogger/VisualLogger.h"
 
-USimpleRandomMovementProcessor::USimpleRandomMovementProcessor()
+USimpleRandomMovementProcessor::USimpleRandomMovementProcessor() : EntityQuery(*this)
 {
 	bAutoRegisterWithProcessingPhases = true;
 	ExecutionFlags = static_cast<int32>(EProcessorExecutionFlags::All);
@@ -25,7 +25,6 @@ void USimpleRandomMovementProcessor::ConfigureQueries(const TSharedRef<FMassEnti
 {
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FSimpleMovementFragment>(EMassFragmentAccess::ReadWrite);
-	EntityQuery.RegisterWithProcessor(*this);
 }
 
 void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)

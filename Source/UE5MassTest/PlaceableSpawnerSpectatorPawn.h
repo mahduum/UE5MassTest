@@ -41,4 +41,10 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Mass|Spawn")
 	void SpawnEntityFromEntitySpawnSubsystem (FVector InLocation);
+
+private:
+	// Actual spawning. Must only run while Mass is not processing (synchronous entity API);
+	// the public functions above defer to these via the entity manager's command buffer when needed.
+	void SpawnEntityFromEntityManager_Immediate(FVector InLocation);
+	void SpawnEntityFromEntitySpawnSubsystem_Immediate(FVector InLocation);
 };

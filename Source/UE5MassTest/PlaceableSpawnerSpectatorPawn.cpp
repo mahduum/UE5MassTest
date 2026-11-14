@@ -14,9 +14,42 @@
 #include "MassTestFragments.h"
 #include "PlaceablesObserver.h"
 #include "Misc/OutputDeviceDebug.h"
+#include "MassCommandBuffer.h"
+#include "MassCommands.h"
+#include "MassObserverManager.h"
 
 
 struct FMassEntityConfig;
+
+namespace
+{
+	/**
+	 * Since UE 5.6+ Mass processing phases can still be in flight on worker threads while game-thread code
+	 * (e.g. Blueprint input events) runs. Synchronous entity API calls (CreateEntity, BatchCreateEntities, ...)
+	 * then assert, so - like the engine's own UMassAgentSubsystem - we push the work to the entity manager's
+	 * command buffer, which is flushed once processing is done.
+	 * @return true if the call was deferred, false if the caller may proceed synchronously.
+	 */
+	bool DeferSpawnIfMassIsProcessing(FMassEntityManager& Manager, APlaceableSpawnerSpectatorPawn* Owner,
+		void (APlaceableSpawnerSpectatorPawn::*ImmediateFunc)(FVector), const FVector& Location)
+	{
+		if (!Manager.IsProcessing() && !Manager.GetObserverManager().IsLocked())
+		{
+			return false;
+		}
+
+		UE_LOG(LogPlaceableSpawner, Verbose, TEXT("Mass is processing - deferring spawn at %s to the command buffer flush."), *Location.ToString());
+		Manager.Defer().PushCommand<FMassDeferredCreateCommand>(
+			[WeakOwner = TWeakObjectPtr<APlaceableSpawnerSpectatorPawn>(Owner), ImmediateFunc, Location](FMassEntityManager&)
+			{
+				if (APlaceableSpawnerSpectatorPawn* StrongOwner = WeakOwner.Get())
+				{
+					(StrongOwner->*ImmediateFunc)(Location);
+				}
+			});
+		return true;
+	}
+}
 // Sets default values
 APlaceableSpawnerSpectatorPawn::APlaceableSpawnerSpectatorPawn()
 {
@@ -50,6 +83,15 @@ void APlaceableSpawnerSpectatorPawn::SetupPlayerInputComponent(UInputComponent* 
 
 void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager(FVector InLocation)
 {
+	FMassEntityManager& Manager = UE::Mass::Utils::GetEntityManagerChecked(*GetWorld());
+	if (!DeferSpawnIfMassIsProcessing(Manager, this, &APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager_Immediate, InLocation))
+	{
+		SpawnEntityFromEntityManager_Immediate(InLocation);
+	}
+}
+
+void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager_Immediate(FVector InLocation)
+{
 	const UWorld& World = *(this->GetWorld());
 
 	if (const FMassEntityTemplate& EntityTemplate = EntityConfig->GetConfig().GetOrCreateEntityTemplate(*(this->GetWorld())); EntityTemplate.IsValid())
@@ -58,8 +100,8 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager(FVector InLoca
 
 		//EntityTemplate.GetCompositionDescriptor()//todo create from composition
 
+		// The world's entity manager is already initialized by the Mass subsystem (re-initializing was a no-op).
 		FMassEntityManager& Manager = UE::Mass::Utils::GetEntityManagerChecked(World);
-		Manager.Initialize();
 		UE_LOG(LogPlaceableSpawner, Display, TEXT("Entity manager retrieved."));
 
 		//todo check if it will work with custom processor
@@ -92,6 +134,15 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntityManager(FVector InLoca
 
 void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntitySpawnSubsystem(FVector InLocation)
 {
+	FMassEntityManager& Manager = UE::Mass::Utils::GetEntityManagerChecked(*GetWorld());
+	if (!DeferSpawnIfMassIsProcessing(Manager, this, &APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntitySpawnSubsystem_Immediate, InLocation))
+	{
+		SpawnEntityFromEntitySpawnSubsystem_Immediate(InLocation);
+	}
+}
+
+void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntitySpawnSubsystem_Immediate(FVector InLocation)
+{
 	UMassSpawnerSubsystem* MassSpawnerSubsystem = UWorld::GetSubsystem<UMassSpawnerSubsystem>(this->GetWorld());
 	
 	const TSubclassOf<UMassProcessor> SpawnDataProcessor = UMassSpawnLocationProcessor::StaticClass();
@@ -111,8 +162,14 @@ void APlaceableSpawnerSpectatorPawn::SpawnEntityFromEntitySpawnSubsystem(FVector
 		//SpawnedHandles.AddDefaulted_GetRef();
 		MassSpawnerSubsystem->SpawnEntities(EntityTemplate.GetTemplateID(), NumberToSpawn, SpawnData, SpawnDataProcessor, SpawnedHandles);
 		FMassEntityManager& Manager = UE::Mass::Utils::GetEntityManagerChecked(*(this->GetWorld()));
-		Manager.Initialize();
-		UE_LOG(LogPlaceableSpawner, Display, TEXT("Current entities count for archetype: %d, all entities: %d, spawned handle: %d, is set: %d, is valid: %d"), Manager.DebugGetArchetypeEntitiesCount(EntityTemplate.GetArchetype()), Manager.DebugGetEntityCount(), SpawnedHandles[0].Index, SpawnedHandles[0].IsSet(), SpawnedHandles[0].IsValid());
+		if (SpawnedHandles.Num() > 0)
+		{
+			UE_LOG(LogPlaceableSpawner, Display, TEXT("Current entities count for archetype: %d, all entities: %d, spawned handle: %d, is set: %d, is valid: %d"), Manager.DebugGetArchetypeEntitiesCount(EntityTemplate.GetArchetype()), Manager.DebugGetEntityCount(), SpawnedHandles[0].Index, SpawnedHandles[0].IsSet(), SpawnedHandles[0].IsValid());
+		}
+		else
+		{
+			UE_LOG(LogPlaceableSpawner, Warning, TEXT("SpawnEntities returned no entities."));
+		}
 	}
 }
 

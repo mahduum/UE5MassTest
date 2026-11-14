@@ -13,7 +13,7 @@
 #include "VisualLogger/VisualLogger.h"
 
 
-UClickedActorSignalProcessor::UClickedActorSignalProcessor()
+UClickedActorSignalProcessor::UClickedActorSignalProcessor() : DeselectQuery(*this)
 {
 	//todo check if the order is correct
 	ExecutionOrder.ExecuteBefore.Add(UE::Mass::ProcessorGroupNames::Behavior);
@@ -24,9 +24,11 @@ void UClickedActorSignalProcessor::ConfigureQueries(const TSharedRef<FMassEntity
 	EntityQuery.AddRequirement<FPlaceableFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadOnly);
 
-	DeselectQuery = EntityQuery;
+	// Queries are registered in the constructor (5.9 initializes registered queries before ConfigureQueries).
+	// Don't copy-assign EntityQuery here: that would also copy its internal/registration state.
+	DeselectQuery.AddRequirement<FPlaceableFragment>(EMassFragmentAccess::ReadOnly);
+	DeselectQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadOnly);
 	DeselectQuery.AddTagRequirement<FIsSelectedTag>(EMassFragmentPresence::All);
-	DeselectQuery.RegisterWithProcessor(*this);
 
 	EntityQuery.AddTagRequirement<FIsSelectedTag>(EMassFragmentPresence::None);//todo check if this does not hamper deselecting?
 	

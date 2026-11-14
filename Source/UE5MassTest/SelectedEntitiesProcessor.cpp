@@ -10,7 +10,7 @@
 #include "MassExecutionContext.h"
 #include "VisualLogger/VisualLogger.h"
 
-USelectedEntitiesProcessor::USelectedEntitiesProcessor()
+USelectedEntitiesProcessor::USelectedEntitiesProcessor() : EntityQuery(*this)
 {
 	//todo add execution order
 	bAutoRegisterWithProcessingPhases = false;
@@ -22,8 +22,6 @@ void USelectedEntitiesProcessor::ConfigureQueries(const TSharedRef<FMassEntityMa
 	EntityQuery.AddRequirement<FAgentRadiusFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddTagRequirement<FIsSelectedTag>(EMassFragmentPresence::All);
-	
-	EntityQuery.RegisterWithProcessor(*this);
 }
 
 void USelectedEntitiesProcessor::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)

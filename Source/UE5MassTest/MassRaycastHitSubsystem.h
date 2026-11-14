@@ -35,6 +35,8 @@ private:
 	void SingleTraceForSignal(FName SignalName, APlayerController* PlayerController, float TraceLength, bool bDebugQuery) const;
 	bool TrySendSelectSignal(AActor* HitActor) const;
 	void SetMoveTarget(const FHitResult& HitResult) const;
+	/** Runs MassSelectedProcessor with the move target as aux data. Must not be called while Mass is processing. */
+	void RunSelectedEntitiesProcessor(const FVector& TargetLocation) const;
 
 protected:
 	UPROPERTY()

@@ -6,6 +6,9 @@
 #include "MassActorSubsystem.h"
 #include "MassExecutor.h"
 #include "MassProcessingContext.h"
+#include "MassCommandBuffer.h"
+#include "MassCommands.h"
+#include "MassObserverManager.h"
 #include "MassSignalSubsystem.h"
 #include "PlaceablesObserver.h"
 #include "EntitySystem/MovieSceneEntityManager.h"
@@ -15,8 +18,11 @@ void UMassRaycastHitSubsystem::OnWorldBeginPlay(UWorld& InWorld)
 {
 	Super::OnWorldBeginPlay(InWorld);
 
-	MassSelectedProcessor = NewObject<USelectedEntitiesProcessor>();
-	//FMassEntityManager& Manager = UE::Mass::Utils::GetEntityManagerChecked(InWorld);
+	// Manually-run processor: since 5.6 queries are only configured through CallInitialize
+	// (previously done implicitly on construction), so it must be initialized explicitly.
+	MassSelectedProcessor = NewObject<USelectedEntitiesProcessor>(this);
+	FMassEntityManager& EntityManager = UE::Mass::Utils::GetEntityManagerChecked(InWorld);
+	MassSelectedProcessor->CallInitialize(this, EntityManager.AsShared());
 }
 
 void UMassRaycastHitSubsystem::SingleLineTraceActorToEntity(APlayerController* PlayerController, float TraceLength, bool bDebugQuery)
@@ -87,12 +93,35 @@ void UMassRaycastHitSubsystem::SetMoveTarget(const FHitResult& HitResult) const
 {
 	//Signal or update processor that will attach move target with specific data for selected entities
 	FMassEntityManager& EntityManager = UE::Mass::Utils::GetEntityManagerChecked(*((this->GetWorld())));
+	const FVector TargetLocation = HitResult.Location;
+
+	// Input events can run while a Mass phase is still in flight on worker threads. Running a processor then would
+	// race with them, and its context can't flush commands ("FlushCommands is not supported while Mass Processing is
+	// active"). Defer to the entity manager's command flush instead (a flush started during a flush just appends).
+	if (EntityManager.IsProcessing() || EntityManager.GetObserverManager().IsLocked())
+	{
+		EntityManager.Defer().PushCommand<FMassDeferredSetCommand>(
+			[WeakThis = TWeakObjectPtr<const UMassRaycastHitSubsystem>(this), TargetLocation](FMassEntityManager&)
+			{
+				if (const UMassRaycastHitSubsystem* StrongThis = WeakThis.Get())
+				{
+					StrongThis->RunSelectedEntitiesProcessor(TargetLocation);
+				}
+			});
+		return;
+	}
+
+	RunSelectedEntitiesProcessor(TargetLocation);
+}
+
+void UMassRaycastHitSubsystem::RunSelectedEntitiesProcessor(const FVector& TargetLocation) const
+{
+	FMassEntityManager& EntityManager = UE::Mass::Utils::GetEntityManagerChecked(*GetWorld());
 	FMassProcessingContext ProcessingContext(EntityManager, 0.0f);
 	//add aux data
-	UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("Setting move target location as aux data: %s"), *HitResult.Location.ToString());
-	
-	const FInstancedStruct MoveTarget = FInstancedStruct::Make(HitResult.Location);
-	ProcessingContext.AuxData = MoveTarget;
+	UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("Setting move target location as aux data: %s"), *TargetLocation.ToString());
+
+	ProcessingContext.AuxData = FInstancedStruct::Make(TargetLocation);
 
 	UE::Mass::Executor::Run(*MassSelectedProcessor, ProcessingContext);
 }
