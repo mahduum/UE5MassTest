@@ -181,7 +181,7 @@ void AWindNoiseGrid::DebugMeshFollowNoise(float DeltaTime)
 	
 	FTransform InstanceTransform;
 	InstancedStaticMeshComponent->SetMobility(EComponentMobility::Movable);
-	auto InstanceBodies = InstancedStaticMeshComponent->InstanceBodies;
+	const TArray<FBodyInstance*>& InstanceBodies = InstancedStaticMeshComponent->GetInstanceBodies();
 	
 	for(auto& body : InstanceBodies)
 	{

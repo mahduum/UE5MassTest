@@ -5,6 +5,7 @@
 #include "ClickedActorSignalProcessor.h"
 #include "MassActorSubsystem.h"
 #include "MassExecutor.h"
+#include "MassProcessingContext.h"
 #include "MassSignalSubsystem.h"
 #include "PlaceablesObserver.h"
 #include "EntitySystem/MovieSceneEntityManager.h"

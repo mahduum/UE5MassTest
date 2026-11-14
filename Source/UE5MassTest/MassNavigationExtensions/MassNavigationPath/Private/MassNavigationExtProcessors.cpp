@@ -22,13 +22,13 @@ UMassNavPathFollowProcessor::UMassNavPathFollowProcessor()
 	ExecutionOrder.ExecuteBefore.Add(UE::Mass::ProcessorGroupNames::Movement);//???check
 }
 
-void UMassNavPathFollowProcessor::Initialize(UObject& Owner)
+void UMassNavPathFollowProcessor::InitializeInternal(UObject& Owner, const TSharedRef<FMassEntityManager>& EntityManager)
 {
-	Super::Initialize(Owner);
+	Super::InitializeInternal(Owner, EntityManager);
 	SignalSubsystem = UWorld::GetSubsystem<UMassSignalSubsystem>(Owner.GetWorld());
 }
 
-void UMassNavPathFollowProcessor::ConfigureQueries()
+void UMassNavPathFollowProcessor::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	EntityQuery_Conditional.AddRequirement<FMassNavigationShortPathFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery_Conditional.AddRequirement<FMassNavigationPathLaneLocationFragment>(EMassFragmentAccess::ReadWrite);
@@ -47,7 +47,7 @@ void UMassNavPathFollowProcessor::Execute(FMassEntityManager& EntityManager, FMa
 	//list entities to signal
 	TArray<FMassEntityHandle> EntitiesToSignalShortPathDone;//todo the signal will be received by another system that will activate action move
 
-	EntityQuery_Conditional.ForEachEntityChunk(EntityManager, Context, [this, &EntitiesToSignalShortPathDone](FMassExecutionContext& Context)
+	EntityQuery_Conditional.ForEachEntityChunk(Context, [this, &EntitiesToSignalShortPathDone](FMassExecutionContext& Context)
 	{
 		const UMassNavigationDataStorageSubsystem& NavStorageSubsystem = Context.GetSubsystemChecked<UMassNavigationDataStorageSubsystem>();
 

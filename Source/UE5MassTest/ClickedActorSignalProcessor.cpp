@@ -19,7 +19,7 @@ UClickedActorSignalProcessor::UClickedActorSignalProcessor()
 	ExecutionOrder.ExecuteBefore.Add(UE::Mass::ProcessorGroupNames::Behavior);
 }
 
-void UClickedActorSignalProcessor::ConfigureQueries()
+void UClickedActorSignalProcessor::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	EntityQuery.AddRequirement<FPlaceableFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadOnly);
@@ -38,7 +38,7 @@ void UClickedActorSignalProcessor::ConfigureQueries()
 void UClickedActorSignalProcessor::SignalEntities(FMassEntityManager& EntityManager, FMassExecutionContext& Context,
                                                   FMassSignalNameLookup& EntitySignals)
 {
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [this, &EntitySignals](const FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [this, &EntitySignals](const FMassExecutionContext& Context)
 	{
 		for (auto Entity : Context.GetEntities())
 		{
@@ -75,9 +75,9 @@ void UClickedActorSignalProcessor::Execute(FMassEntityManager& EntityManager, FM
 	if (TransientEntitiesToSignal.Num())
 	{
 		UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("Transient entities count on execute deselect query: %d, query matching entities: %d"),
-		TransientEntitiesToSignal.Num(), DeselectQuery.GetNumMatchingEntities(EntityManager));
+		TransientEntitiesToSignal.Num(), DeselectQuery.GetNumMatchingEntities());
 		//then clear whatever selections we had before
-		DeselectQuery.ForEachEntityChunk(EntityManager, Context, [this](const FMassExecutionContext& Context)
+		DeselectQuery.ForEachEntityChunk(Context, [this](const FMassExecutionContext& Context)
 		{
 			for (const auto Entity : Context.GetEntities())
 			{
@@ -93,9 +93,9 @@ void UClickedActorSignalProcessor::Execute(FMassEntityManager& EntityManager, FM
 	//todo: or I can simply have two different queries... BUT the base has already the main query... so 
 }
 
-void UClickedActorSignalProcessor::Initialize(UObject& Owner)
+void UClickedActorSignalProcessor::InitializeInternal(UObject& Owner, const TSharedRef<FMassEntityManager>& EntityManager)
 {
-	Super::Initialize(Owner);
+	Super::InitializeInternal(Owner, EntityManager);
 	
 	UMassSignalSubsystem* SignalSubsystem = UWorld::GetSubsystem<UMassSignalSubsystem>(Owner.GetWorld());
 	SubscribeToSignal(*SignalSubsystem, UE::Mass::Signals::Selected);//todo after subscribing how SignalEntities call is prompted? Delegate signal received does actual work as it is passed entites on which to do the job

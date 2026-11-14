@@ -18,7 +18,7 @@ UMassFloatingPawnMovementToActorTranslator::UMassFloatingPawnMovementToActorTran
 	RequiredTags.Add<FMassFloatingPawnMovementCopyToActorTag>();
 }
 
-void UMassFloatingPawnMovementToActorTranslator::ConfigureQueries()
+void UMassFloatingPawnMovementToActorTranslator::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	AddRequiredTagsToQuery(EntityQuery);
 	EntityQuery.AddRequirement<FFloatingPawnMovementWrapperFragment>(EMassFragmentAccess::ReadWrite);
@@ -29,7 +29,7 @@ void UMassFloatingPawnMovementToActorTranslator::ConfigureQueries()
 void UMassFloatingPawnMovementToActorTranslator::Execute(FMassEntityManager& EntityManager,
 	FMassExecutionContext& Context)
 {
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [this](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [this](FMassExecutionContext& Context)
 	{
 		const TArrayView<FFloatingPawnMovementWrapperFragment> ComponentList = Context.GetMutableFragmentView<FFloatingPawnMovementWrapperFragment>();
 		const TConstArrayView<FMassVelocityFragment> VelocityList = Context.GetFragmentView<FMassVelocityFragment>();
@@ -64,7 +64,7 @@ UMassFloatingPawnMovementToMassTranslator::UMassFloatingPawnMovementToMassTransl
 	RequiredTags.Add<FMassFloatingPawnMovementCopyToMassTag>();
 }
 
-void UMassFloatingPawnMovementToMassTranslator::ConfigureQueries()
+void UMassFloatingPawnMovementToMassTranslator::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	EntityQuery.AddRequirement<FFloatingPawnMovementWrapperFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
@@ -74,7 +74,7 @@ void UMassFloatingPawnMovementToMassTranslator::ConfigureQueries()
 void UMassFloatingPawnMovementToMassTranslator::Execute(FMassEntityManager& EntityManager,
 	FMassExecutionContext& Context)
 {
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [this](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [this](FMassExecutionContext& Context)
 	{
 		 const TConstArrayView<FFloatingPawnMovementWrapperFragment> ComponentList = Context.GetFragmentView<FFloatingPawnMovementWrapperFragment>();
 		 const TArrayView<FTransformFragment> LocationList = Context.GetMutableFragmentView<FTransformFragment>();

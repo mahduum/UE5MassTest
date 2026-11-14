@@ -4,6 +4,7 @@
 
 //#include "BezierUtilities.h"
 
+#include "MassEntityUtils.h"
 #include "MassActorSubsystem.h"
 #include "MassEntityView.h"
 #include "MassNavigationExtFragments.h"
@@ -287,10 +288,10 @@ void UMassPathFinderSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 
 	NavStorageSubsystem = Collection.InitializeDependency<UMassNavigationDataStorageSubsystem>();
-	checkfSlow(AgentSubsystem != nullptr, TEXT("MassAgentSubsystem is required"));
+	checkfSlow(NavStorageSubsystem != nullptr, TEXT("MassNavigationDataStorageSubsystem is required"));
 
 	ActorSubsystem = Collection.InitializeDependency<UMassActorSubsystem>();
-	checkfSlow(AgentSubsystem != nullptr, TEXT("MassAgentSubsystem is required"));
+	checkfSlow(ActorSubsystem != nullptr, TEXT("MassActorSubsystem is required"));
 }
 
 static void FlattenSplineSegments(TConstArrayView<FPathSplinePoint> Points, const float Tolerance, TArray<FPathSplinePoint>& OutPoints)

@@ -18,7 +18,7 @@ UMassPawnMovementComponentToActorTranslator::UMassPawnMovementComponentToActorTr
 	RequiredTags.Add<FMassPawnMovementCopyToActorTag>();
 }
 
-void UMassPawnMovementComponentToActorTranslator::ConfigureQueries()
+void UMassPawnMovementComponentToActorTranslator::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	AddRequiredTagsToQuery(EntityQuery);
 	EntityQuery.AddRequirement<FPawnMovementWrapperFragment>(EMassFragmentAccess::ReadWrite);
@@ -30,7 +30,7 @@ void UMassPawnMovementComponentToActorTranslator::ConfigureQueries()
 void UMassPawnMovementComponentToActorTranslator::Execute(FMassEntityManager& EntityManager,
 	FMassExecutionContext& Context)
 {
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [this](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [this](FMassExecutionContext& Context)
 	{
 		const TArrayView<FPawnMovementWrapperFragment> ComponentList = Context.GetMutableFragmentView<FPawnMovementWrapperFragment>();//todo get this wrapper to be set the right component
 		const TConstArrayView<FMassVelocityFragment> VelocityList = Context.GetFragmentView<FMassVelocityFragment>();
@@ -61,7 +61,7 @@ UMassPawnMovementComponentToMassTranslator::UMassPawnMovementComponentToMassTran
 	RequiredTags.Add<FMassPawnMovementCopyToMassTag>();
 }
 
-void UMassPawnMovementComponentToMassTranslator::ConfigureQueries()
+void UMassPawnMovementComponentToMassTranslator::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	EntityQuery.AddRequirement<FPawnMovementWrapperFragment>(EMassFragmentAccess::ReadOnly);//todo temp
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
@@ -71,7 +71,7 @@ void UMassPawnMovementComponentToMassTranslator::ConfigureQueries()
 void UMassPawnMovementComponentToMassTranslator::Execute(FMassEntityManager& EntityManager,
 	FMassExecutionContext& Context)
 {
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [this](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [this](FMassExecutionContext& Context)
 	{
 		//wrapper remains the same
 		const TConstArrayView<FPawnMovementWrapperFragment> ComponentList = Context.GetFragmentView<FPawnMovementWrapperFragment>();//todo get this wrapper to be set the right component

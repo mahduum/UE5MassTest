@@ -7,6 +7,7 @@
 
 #include "SimpleRandomMovementTrait.h"
 #include "MassCommonFragments.h"
+#include "MassCommonTypes.h"
 #include "MassEntitySubsystem.h"
 #include "MassEntityTemplateRegistry.h"
 #include "MassExecutionContext.h"
@@ -20,7 +21,7 @@ USimpleRandomMovementProcessor::USimpleRandomMovementProcessor()
 	ExecutionOrder.ExecuteBefore.Add(UE::Mass::ProcessorGroupNames::Avoidance);
 }
 
-void USimpleRandomMovementProcessor::ConfigureQueries()
+void USimpleRandomMovementProcessor::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	EntityQuery.AddRequirement<FTransformFragment>(EMassFragmentAccess::ReadWrite);
 	EntityQuery.AddRequirement<FSimpleMovementFragment>(EMassFragmentAccess::ReadWrite);
@@ -29,7 +30,7 @@ void USimpleRandomMovementProcessor::ConfigureQueries()
 
 void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)
 {
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, ([this](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, ([this](FMassExecutionContext& Context)
 	{
 		const TArrayView<FTransformFragment> TransformsList = Context.GetMutableFragmentView<FTransformFragment>();
 		const TArrayView<FSimpleMovementFragment> SimpleMovementList = Context.GetMutableFragmentView<FSimpleMovementFragment>();
@@ -58,7 +59,7 @@ void USimpleRandomMovementProcessor::Execute(FMassEntityManager& EntityManager, 
  * UMassObserverProcessor will help to initialize fragments that depend on other fragments information or other systems that may not be initialised at construction time
  * for example modify a radius of some units for example for builders it would configure queries by adding SomeRadiusFragment and SomeBuilderTag (:FMassTag)
  * AddTagRequirement<SomeTag>(EMassFragmentPresence::All)
- * it would be also different in constructor instead of order of initialization ObservedType = SomeRadiusFragment::StaticStruct(); and Operation = EMassObserverOperation::Add;
+ * it would be also different in constructor instead of order of initialization ObservedTypes.Add(SomeRadiusFragment::StaticStruct()); and Operation = EMassObserverOperation::Add;
  * it all means that it will be executed just one time at the beginning
  * todo use this for setting initial target for cones
  */

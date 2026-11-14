@@ -27,7 +27,7 @@ FPlaceableSpawnLocationDataHandle UPlaceableMassSpawnLocationSubsystem::Register
 		return FPlaceableSpawnLocationDataHandle();
 	}
 
-	const int32 Index = (ZoneGraphDataFreeList.Num() > 0) ? ZoneGraphDataFreeList.Pop(/*bAllowShrinking=*/ false) : RegisteredSpawnLocationData.AddDefaulted();//if it is full add new
+	const int32 Index = (ZoneGraphDataFreeList.Num() > 0) ? ZoneGraphDataFreeList.Pop(EAllowShrinking::No) : RegisteredSpawnLocationData.AddDefaulted();//if it is full add new
 	FRegisteredPlaceableSpawnLocationData& RegisteredData = RegisteredSpawnLocationData[Index];
 	RegisteredData.Reset(RegisteredData.Generation); // Do not change generation.
 	RegisteredData.SpawnLocation = InLocationData;

@@ -35,7 +35,7 @@ FMassNavigationPathDataHandle UMassNavigationDataStorageSubsystem::RegisterMassN
 		return FMassNavigationPathDataHandle();
 	}
 
-	const int32 Index = (NavigationDataFreeList.Num() > 0) ? NavigationDataFreeList.Pop(/*bAllowShrinking=*/ false) : RegisteredNavigationData.AddDefaulted();
+	const int32 Index = (NavigationDataFreeList.Num() > 0) ? NavigationDataFreeList.Pop(EAllowShrinking::No) : RegisteredNavigationData.AddDefaulted();
 	FRegisteredMassNavigationData& RegisteredData = RegisteredNavigationData[Index];
 	RegisteredData.Reset(RegisteredData.Generation); // Do not change generation, it's recycled from free list
 	RegisteredData.NavigationPathsData = &InNavigationData;

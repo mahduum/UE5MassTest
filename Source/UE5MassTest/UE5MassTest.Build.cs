@@ -9,8 +9,8 @@ public class UE5MassTest : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore",
-			"MassCommon", "MassEntity", "MassCrowd", "MassAIBehavior", "MassGameplayDebug", "PluginTest_0206_2001",
-			"MassGameplayExternalTraits", "MassSpawner", "StructUtils", "MassEntityDebugger", "MassSignals", "MassActors",
+			"MassCore", "MassCommon", "MassEntity", "MassCrowd", "MassAIBehavior", "MassGameplayDebug", "PluginTest_0206_2001",
+			"MassGameplayExternalTraits", "MassSpawner", "MassSignals", "MassActors",
 			"MassNavigation", "MassMovement", "MassRepresentation", "NavigationSystem", "Navmesh"
 		});
 

@@ -8,11 +8,11 @@
 #include "MassEntityManager.h"
 #include "MassEntitySpawnDataGeneratorBase.h"
 #include "MassExecutor.h"
+#include "MassProcessingContext.h"
 #include "MassSpawnerSubsystem.h"
 #include "MassSpawnLocationProcessor.h"
 #include "MassTestFragments.h"
 #include "PlaceablesObserver.h"
-#include "MassEntity/Private/MassArchetypeData.h"
 #include "Misc/OutputDeviceDebug.h"
 
 

@@ -16,12 +16,12 @@ DEFINE_LOG_CATEGORY(LogPlaceableSpawner);
 UPlaceablesObserver::UPlaceablesObserver() : EntityQuery(*this)
 {
 	ExecutionFlags = static_cast<int32>(EProcessorExecutionFlags::All);
-	ObservedType = FPlaceableFragment::StaticStruct();
-	Operation = EMassObservedOperation::Add;
+	ObservedTypes.Add(FPlaceableFragment::StaticStruct());
+	ObservedOperations = EMassObservedOperationFlags::Add;
 	//bAutoRegisterWithProcessingPhases = true;//todo how is it initialized???
 }
 
-void UPlaceablesObserver::ConfigureQueries()
+void UPlaceablesObserver::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	//todo check if any of these processors get data from outside?
 	EntityQuery.AddRequirement<FPlaceableFragment>(EMassFragmentAccess::ReadOnly);
@@ -35,7 +35,7 @@ void UPlaceablesObserver::ConfigureQueries()
 void UPlaceablesObserver::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)
 {
 	UE_LOG(LogPlaceableSpawner, Display, TEXT("Initializing location of spawned placeable."))
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [this](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [this](FMassExecutionContext& Context)
 	{
 		//const UPlaceableMassSpawnLocationSubsystem& SpawnLocationSubsystem = Context.GetSubsystemChecked<UPlaceableMassSpawnLocationSubsystem>();//todo this can be added as dependency requirement, try if it works
 		check(PlaceableMassSpawnLocationSubsystem);
@@ -61,10 +61,10 @@ void UPlaceablesObserver::Execute(FMassEntityManager& EntityManager, FMassExecut
 	});
 }
 
-void UPlaceablesObserver::Initialize(UObject& InOwner)//called with the owner of entity manager when it initializes all the processors with FMassRuntimePipeline (Runtime->MassEntity in the Mass Plugin)
+void UPlaceablesObserver::InitializeInternal(UObject& InOwner, const TSharedRef<FMassEntityManager>& EntityManager)//called with the owner of entity manager when it initializes all the processors with FMassRuntimePipeline (Runtime->MassEntity in the Mass Plugin)
 {
 	UE_LOG(LogPlaceableSpawner, Display, TEXT("Initializing UPlaceableObserver from Initialize()."))
-	Super::Initialize(InOwner);
+	Super::InitializeInternal(InOwner, EntityManager);
 	const UWorld* World = InOwner.GetWorld();
 	PlaceableMassSpawnLocationSubsystem = UWorld::GetSubsystem<UPlaceableMassSpawnLocationSubsystem>(World);
 }
@@ -74,11 +74,11 @@ void UPlaceablesObserver::Initialize(UObject& InOwner)//called with the owner of
 UCharacterMovementWrapperObserver::UCharacterMovementWrapperObserver() : EntityQuery(*this)
 {
 	ExecutionFlags = static_cast<int32>(EProcessorExecutionFlags::All);
-	ObservedType = FCharacterMovementComponentWrapperFragment::StaticStruct();
-	Operation = EMassObservedOperation::Add;
+	ObservedTypes.Add(FCharacterMovementComponentWrapperFragment::StaticStruct());
+	ObservedOperations = EMassObservedOperationFlags::Add;
 }
 
-void UCharacterMovementWrapperObserver::ConfigureQueries()
+void UCharacterMovementWrapperObserver::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	EntityQuery.AddRequirement<FCharacterMovementComponentWrapperFragment>(EMassFragmentAccess::ReadOnly);
 	EntityQuery.AddRequirement<FPlaceableFragment>(EMassFragmentAccess::ReadOnly);
@@ -88,7 +88,7 @@ void UCharacterMovementWrapperObserver::Execute(FMassEntityManager& EntityManage
 {
 	UE_LOG(LogPlaceableSpawner, Display, TEXT("Initializing FCharacterMovementComponentWrapperFragments."))
 
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [](FMassExecutionContext& Context)
 	{
 		UE_LOG(LogPlaceableSpawner, Display, TEXT("FCharacterMovementComponentWrapperFragments count on added new fragments: %d"), Context.GetNumEntities());
 	});

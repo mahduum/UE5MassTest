@@ -16,7 +16,7 @@ USelectedEntitiesProcessor::USelectedEntitiesProcessor()
 	bAutoRegisterWithProcessingPhases = false;
 }
 
-void USelectedEntitiesProcessor::ConfigureQueries()
+void USelectedEntitiesProcessor::ConfigureQueries(const TSharedRef<FMassEntityManager>& EntityManager)
 {
 	EntityQuery.AddRequirement<FMassMoveTargetFragment>(EMassFragmentAccess::ReadWrite);//todo initialize somewhere all to stand when added
 	EntityQuery.AddRequirement<FAgentRadiusFragment>(EMassFragmentAccess::ReadOnly);
@@ -28,7 +28,7 @@ void USelectedEntitiesProcessor::ConfigureQueries()
 
 void USelectedEntitiesProcessor::Execute(FMassEntityManager& EntityManager, FMassExecutionContext& Context)
 {
-	EntityQuery.ForEachEntityChunk(EntityManager, Context, [this, &EntityManager](FMassExecutionContext& Context)
+	EntityQuery.ForEachEntityChunk(Context, [this, &EntityManager](FMassExecutionContext& Context)
 	{
 		const FVector MoveTargetLocation = Context.GetAuxData().Get<FVector>();
 		UE_VLOG_UELOG(this, LogPlaceableSpawner, Log, TEXT("Received move target location as aux data: %s"), *MoveTargetLocation.ToString());

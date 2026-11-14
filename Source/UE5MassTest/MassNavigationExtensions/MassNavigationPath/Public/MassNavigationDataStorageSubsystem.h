@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MassEntityUtils.h"
 #include "NavigationPathsData.h"
 #include "MassNavigationDataStorageSubsystem.generated.h"
 
