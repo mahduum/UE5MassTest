@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MassEntityElementTypes.h"
+#include "Mass/EntityElementTypes.h"
 #include "MassEntityQuery.h"
 #include "MassEntityTraitBase.h"
 #include "MassProcessor.h"

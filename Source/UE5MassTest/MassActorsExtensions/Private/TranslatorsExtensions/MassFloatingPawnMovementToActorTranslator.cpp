@@ -9,6 +9,27 @@
 #include "GameFramework/FloatingPawnMovement.h"
 #include "UE5MassTest/PlaceablesObserver.h"
 #include "UE5MassTest/MassActorsExtensions/Public/TranslatorsExtensions/MassPawnMovementComponentToActorTranslator.h"
+#include "Components/CapsuleComponent.h"
+
+namespace
+{
+	/** Bottom of the actor: the root location, minus the half height when the root is a capsule (ACharacter layout). */
+	FVector GetFeetLocation(const UMovementComponent& MovementComponent)
+	{
+		const AActor* Owner = MovementComponent.GetOwner();
+		if (!Owner)
+		{
+			return MovementComponent.UpdatedComponent ? MovementComponent.UpdatedComponent->GetComponentLocation() : FVector::ZeroVector;
+		}
+
+		FVector Feet = Owner->GetActorLocation();
+		if (const UCapsuleComponent* Capsule = Cast<UCapsuleComponent>(Owner->GetRootComponent()))
+		{
+			Feet.Z -= Capsule->GetScaledCapsuleHalfHeight();
+		}
+		return Feet;
+	}
+}
 
 UMassFloatingPawnMovementToActorTranslator::UMassFloatingPawnMovementToActorTranslator() : EntityQuery(*this)
 {
@@ -86,7 +107,9 @@ void UMassFloatingPawnMovementToMassTranslator::Execute(FMassEntityManager& Enti
 		 {
 		 	if (const UFloatingPawnMovement* AsFloatingPawnMovement = ComponentList[i].Component.Get())
 		 	{
-		 		LocationList[i].GetMutableTransform().SetLocation(AsFloatingPawnMovement->GetActorNavLocation());
+		 		// Entity transform = feet. Don't use GetActorNavLocation(): for pawns it is ActorLocation - BaseEyeHeight
+		 		// (64 by default), which fed back through the Mass->actor sync and sank the pawn every frame it moved.
+		 		LocationList[i].GetMutableTransform().SetLocation(GetFeetLocation(*AsFloatingPawnMovement));
 		 		VelocityList[i].Value = AsFloatingPawnMovement->Velocity;
 		 	}
 		 }
